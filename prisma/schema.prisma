@@ -19,10 +19,28 @@ model TestModel {
   value     Int       @default(0)
   createdAt DateTime  @default(now())
 }
-model Messages{
+model User{
+  id       String @id @default(uuid())
+  name     String
+  password String @unique
+  messages  Message[]
+  chats     Chat[]
+}
+model Message{
   id        String    @id @default(uuid())
-  userID    String
-  chatID    String
   data      String
-  time      DateTime
+  createdAt DateTime
+
+  author    User      @relation(fields: [authorID], references: [id])
+  authorID  String
+
+  chat      Chat    @relation(fields: [chatID],references: [id])
+  chatID    String  
+}
+model Chat{
+  id       String @id @default(uuid())
+  name     String
+
+  messages Message[]
+  participants User[]
 }
