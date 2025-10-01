@@ -10,7 +10,7 @@ import {
 } from '@nestjs/common';
 import { UsersService } from 'src/users/users.service';
 import { AuthService } from './auth.service';
-import { userDto } from 'src/users/DTO/create-user.dto';
+import { Prisma } from '@prisma/client';
 
 @Controller('auth')
 export class AuthController {
@@ -23,7 +23,9 @@ export class AuthController {
     return 'hey';
   }
   @Post('createUser')
-  createUser(@Body(new ValidationPipe()) user: userDto) {
-    return this.userService.createUser();
+  createUser(@Body(new ValidationPipe()) userDto: Prisma.UserCreateInput) {
+    return this.userService.createUser(userDto);
   }
+  @Post('login')
+  login(@Body(new ValidationPipe()) userLogin) {}
 }
