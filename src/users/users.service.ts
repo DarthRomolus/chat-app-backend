@@ -1,11 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
-import { userDto } from './DTO/user.dto';
+import { userDto } from './DTO/create-user.dto';
 
 @Injectable()
 export class UsersService {
-  getUser(email: string, password: string): userDto {
-    return { email, password };
+  getUser(email: string, password: string, name: string): userDto {
+    return { email, name, password };
   }
   createUser() {
     return 'user created';

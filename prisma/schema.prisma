@@ -30,6 +30,7 @@ model Chat{
   id       String @id @default(uuid())
   name     String
   createdAt DateTime
+  admin    String 
   
   messages Message[]
   participants User[]
