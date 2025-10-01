@@ -1,6 +1,15 @@
-import { Body, Controller, Get, Param, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  Post,
+  Patch,
+  Delete,
+} from '@nestjs/common';
 import { UsersService } from 'src/users/users.service';
 import { AuthService } from './auth.service';
+import { userDto } from 'src/users/DTO/user.dto';
 
 @Controller('auth')
 export class AuthController {
@@ -12,12 +21,8 @@ export class AuthController {
   authHello() {
     return 'hey';
   }
-  @Get(':id')
-  getId(@Param('id') id: string) {
-    return { id };
-  }
-  @Post('create')
-  createUser(@Body() user: { email: string; password: string }) {
-    return this.userService.getInfo(user.email, user.password);
+  @Post('createUser')
+  createUser(@Body() user: userDto) {
+    return this.userService.createUser();
   }
 }
