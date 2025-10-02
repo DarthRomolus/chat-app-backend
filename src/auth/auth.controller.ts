@@ -11,6 +11,7 @@ import {
 import { UsersService } from 'src/users/users.service';
 import { AuthService } from './auth.service';
 import { Prisma } from '@prisma/client';
+import { createUserDto } from 'src/users/DTO/create-user.dto';
 
 @Controller('auth')
 export class AuthController {
@@ -22,8 +23,8 @@ export class AuthController {
   authHello() {
     return 'hey';
   }
-  @Post('createUser')
-  createUser(@Body(new ValidationPipe()) userDto: Prisma.UserCreateInput) {
+  @Post('register')
+  createUser(@Body(new ValidationPipe()) userDto: createUserDto) {
     return this.userService.createUser(userDto);
   }
   @Post('login')

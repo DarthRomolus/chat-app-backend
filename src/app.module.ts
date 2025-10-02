@@ -6,9 +6,10 @@ import { AuthModule } from './auth/auth.module';
 import { ChatModule } from './chat/chat.module';
 import { SocketsModule } from './sockets/sockets.module';
 import { DatabaseModule } from './database/database.module';
+import { MessagesModule } from './messages/messages.module';
 
 @Module({
-  imports: [UsersModule, AuthModule, ChatModule, SocketsModule, DatabaseModule],
+  imports: [UsersModule, AuthModule, ChatModule, SocketsModule, DatabaseModule, MessagesModule],
   controllers: [AppController],
   providers: [AppService],
 })
