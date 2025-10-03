@@ -4,12 +4,19 @@ import { AppService } from './app.service';
 import { UsersModule } from './users/users.module';
 import { AuthModule } from './auth/auth.module';
 import { ChatModule } from './chat/chat.module';
-import { SocketsModule } from './sockets/sockets.module';
+import { SocketsModule } from './gateway/sockets.module';
 import { DatabaseModule } from './database/database.module';
 import { MessagesModule } from './messages/messages.module';
 
 @Module({
-  imports: [UsersModule, AuthModule, ChatModule, SocketsModule, DatabaseModule, MessagesModule],
+  imports: [
+    UsersModule,
+    AuthModule,
+    ChatModule,
+    SocketsModule,
+    DatabaseModule,
+    MessagesModule,
+  ],
   controllers: [AppController],
   providers: [AppService],
 })
