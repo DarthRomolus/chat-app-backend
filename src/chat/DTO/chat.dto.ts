@@ -9,17 +9,16 @@ import {
   MinLength,
 } from 'class-validator';
 
-export class createChatDto {
+export class CreateChatDto {
   @IsNotEmpty()
   name: string;
 
   @IsNotEmpty()
-  @IsUUID()
   adminID: string;
 
   @IsNotEmpty()
   @IsArray()
   @ArrayMinSize(1)
-  @IsUUID('all', { each: true })
+  @IsEmail({}, { each: true })
   participants: string[];
 }

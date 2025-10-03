@@ -12,6 +12,7 @@ import { UsersService } from 'src/users/users.service';
 import { AuthService } from './auth.service';
 import { Prisma } from '@prisma/client';
 import { createUserDto } from 'src/users/DTO/create-user.dto';
+import { loginDto } from './DTO/login.dto';
 
 @Controller('auth')
 export class AuthController {
@@ -19,14 +20,12 @@ export class AuthController {
     private readonly userService: UsersService,
     private readonly authService: AuthService,
   ) {}
-  @Get()
-  authHello() {
-    return 'hey';
-  }
   @Post('register')
-  createUser(@Body(new ValidationPipe()) userDto: createUserDto) {
-    return this.userService.createUser(userDto);
+  async createUser(@Body(new ValidationPipe()) userDto: createUserDto) {
+    return await this.userService.createUser(userDto);
   }
   @Post('login')
-  login(@Body(new ValidationPipe()) userLogin) {}
+  async login(@Body(new ValidationPipe()) userLogin: loginDto) {
+    return await this.authService.login(userLogin);
+  }
 }

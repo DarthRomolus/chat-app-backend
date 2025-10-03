@@ -21,15 +21,15 @@ export class UsersController {
   }
   @Get(':id')
   getUser(@Param('id') id: string) {
-    return this.userService.getUser(id);
+    return this.userService.getUserById(id);
   }
 
-  @Patch(':id')
+  @Patch('')
   updateUser(
     @Body(new ValidationPipe()) updateUserDto: updateUserDto,
     @Param('id') id: string,
   ) {
-    return this.userService.updateUser(updateUserDto, id);
+    return this.userService.updateUser(updateUserDto);
   }
   @Delete(':id')
   deleteUser(@Param('id') id: string) {
