@@ -11,8 +11,10 @@ import {
 
 export class loginDto {
   @IsEmail()
+  @IsString()
   email: string;
 
   @IsNotEmpty()
+  @IsString()
   password: string;
 }

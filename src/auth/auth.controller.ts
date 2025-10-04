@@ -16,13 +16,10 @@ import { loginDto } from './DTO/login.dto';
 
 @Controller('auth')
 export class AuthController {
-  constructor(
-    private readonly userService: UsersService,
-    private readonly authService: AuthService,
-  ) {}
+  constructor(private readonly authService: AuthService) {}
   @Post('register')
-  async createUser(@Body(new ValidationPipe()) userDto: createUserDto) {
-    return await this.userService.createUser(userDto);
+  async createUser(@Body(new ValidationPipe()) userRegister: createUserDto) {
+    return await this.authService.register(userRegister);
   }
   @Post('login')
   async login(@Body(new ValidationPipe()) userLogin: loginDto) {

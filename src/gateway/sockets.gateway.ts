@@ -10,9 +10,14 @@ import {
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
 import { JwtService } from '@nestjs/jwt';
-import { Body, OnModuleInit } from '@nestjs/common';
+import { Body, OnModuleInit, ValidationPipe } from '@nestjs/common';
+import { wsMessageDto } from './ws-message.dto';
 
-@WebSocketGateway()
+@WebSocketGateway({
+  cors: {
+    origin: ['http://localhost:5173'],
+  },
+})
 export class SocketsGateway implements OnModuleInit {
   @WebSocketServer()
   server: Server;
@@ -24,11 +29,10 @@ export class SocketsGateway implements OnModuleInit {
     });
   }
   @SubscribeMessage('newMessage')
-  handleMessage(@MessageBody() body: any, client: any, payload: any): string {
+  handleMessage(@MessageBody(new ValidationPipe()) body: wsMessageDto) {
     this.server.emit('onMessage', {
-      msg: 'emitted',
-      content: body,
+      authorId: body.authorId,
+      content: body.content,
     });
-    return 'Hello world!';
   }
 }
