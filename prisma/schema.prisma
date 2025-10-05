@@ -18,7 +18,7 @@ model User{
 }
 model Message{
   id        String    @id @default(uuid())
-  data      String
+  content      String
   createdAt DateTime  @default(now())
 
   author    User      @relation(fields: [authorID], references: [id])
@@ -31,7 +31,6 @@ model Chat{
   id       String     @id @default(uuid())
   name     String
   createdAt DateTime  @default(now())
-  adminID    String 
   
   messages Message[]
   participants User[]

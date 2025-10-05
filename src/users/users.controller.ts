@@ -20,35 +20,47 @@ import { JwtAuthGuard } from 'src/auth/guards/jwt.guard';
 export class UsersController {
   constructor(private readonly userService: UsersService) {}
   @Get('')
-  findAll() {
-    return this.userService.getAllUsers();
+  async findAll() {
+    return await this.userService.getAllUsers();
   }
   @Get('me')
-  getUser(@Request() req) {
-    const userId = req.user?.sub;
+  async getUser(@Request() req) {
+    const userId = req.user.sub;
     if (!userId) {
       throw new UnauthorizedException('No authenticated user on request');
     }
-    return this.userService.getUserById(req.user.sub);
+    return await this.userService.getUserById(userId);
   }
-
+  @Get('chats')
+  async getAllChats(@Request() req) {
+    const userId = req.user.sub;
+    if (!userId) {
+      throw new UnauthorizedException('No authenticated user on request');
+    }
+    return await this.userService.getAllUserChat(userId);
+  }
+  @Get('exists')
+  async checkUserExists(@Request() req) {
+    const userId = req.user.sub;
+    return this.userService.checkUserExists(userId);
+  }
   @Patch('me')
-  updateUser(
+  async updateUser(
     @Body(new ValidationPipe()) updateUserDto: updateUserDto,
     @Request() req,
   ) {
-    const userId = req.user?.sub;
+    const userId = req.user.sub;
     if (!userId) {
       throw new UnauthorizedException('No authenticated user on request');
     }
-    return this.userService.updateUser(updateUserDto, req.user.sub);
+    return await this.userService.updateUser(updateUserDto, userId);
   }
   @Delete('me')
-  deleteUser(@Request() req) {
-    const userId = req.user?.sub;
+  async deleteUser(@Request() req) {
+    const userId = req.user.sub;
     if (!userId) {
       throw new UnauthorizedException('No authenticated user on request');
     }
-    return this.userService.deleteUser(req.user.sub);
+    return await this.userService.deleteUser(userId);
   }
 }

@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   Injectable,
   NotFoundException,
   UnauthorizedException,
@@ -19,7 +20,7 @@ export class ChatService {
     for (const participant of createChatDto.participants) {
       const user = await this.usersService.getUserByEmail(participant);
       if (!user) {
-        throw new UnauthorizedException();
+        throw new BadRequestException('no user with that email exists');
       }
       GetUsersByIdArray.push(user.id);
     }
@@ -29,7 +30,6 @@ export class ChatService {
     return await this.databaseService.chat.create({
       data: {
         name: createChatDto.name,
-        adminID: createChatDto.adminID,
         participants: participants,
       },
       include: {
@@ -61,7 +61,6 @@ export class ChatService {
       where: { id: id },
       data: {
         name: updateChatDto.name,
-        adminID: updateChatDto.adminID,
         participants: participants,
       },
       include: {
@@ -86,10 +85,6 @@ export class ChatService {
     return await this.databaseService.chat.delete({ where: { id } });
   }
   async joinChat(chatId: string, userId: string) {
-    // 1. Basic Validation: Ensure the user trying to join actually exists.
-    const userExists = await this.usersService.getUserById(userId); // Assuming this method exists
-
-    // 2. Basic Validation: Ensure the chat actually exists.
     const chatExists = await this.databaseService.chat.findUnique({
       where: { id: chatId },
     });
@@ -101,6 +96,12 @@ export class ChatService {
       data: {
         participants: { connect: { id: userId } },
       },
+    });
+  }
+  async getAllChatMessages(chatId: string) {
+    return await this.databaseService.chat.findUnique({
+      where: { id: chatId },
+      include: { messages: true },
     });
   }
 }

@@ -14,9 +14,6 @@ export class CreateChatDto {
   name: string;
 
   @IsNotEmpty()
-  adminID: string;
-
-  @IsNotEmpty()
   @IsArray()
   @ArrayMinSize(1)
   @IsEmail({}, { each: true })

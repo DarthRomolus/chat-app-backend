@@ -12,10 +12,26 @@ export class UsersService {
   async getAllUsers() {
     return await this.databaseService.user.findMany();
   }
+  async getAllUserChat(id: string) {
+    return await this.databaseService.user.findUnique({
+      where: { id: id },
+      include: { chats: true },
+    });
+  }
   async getUserById(id: string) {
     return await this.databaseService.user.findUnique({
       where: { id: id },
     });
+  }
+  async checkUserExists(id: string) {
+    const exits = await this.databaseService.user.findUnique({
+      where: { id: id },
+    });
+    if (exits) {
+      return { msg: 'exists' };
+    } else {
+      return { msg: 'failed' };
+    }
   }
   async getUserByEmail(email: string) {
     return await this.databaseService.user.findUnique({
