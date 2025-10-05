@@ -2,7 +2,7 @@ import { IsNotEmpty } from 'class-validator';
 
 export class wsMessageDto {
   @IsNotEmpty()
-  authorId: string;
+  room: string;
 
   @IsNotEmpty()
   content: string;

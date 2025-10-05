@@ -5,7 +5,7 @@ import { JwtService } from '@nestjs/jwt';
 import { loginDto } from './DTO/login.dto';
 import * as bcrypt from 'bcrypt';
 import { createUserDto } from 'src/users/DTO/create-user.dto';
-import { Prisma } from 'generated/prisma';
+import { Prisma, User } from 'generated/prisma';
 
 @Injectable()
 export class AuthService {
@@ -17,9 +17,12 @@ export class AuthService {
   async register(register: createUserDto) {
     const exist = await this.userService.getUserByEmail(register.email);
     if (exist) throw new UnauthorizedException('Email already in use');
+
     await this.userService.createUser(register);
+
     const user = await this.userService.getUserByEmail(register.email);
     if (!user) throw new UnauthorizedException('error');
+
     return this.issueAccessToken({
       id: user.id,
       name: user.name,

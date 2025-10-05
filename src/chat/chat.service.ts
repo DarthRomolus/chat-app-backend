@@ -1,4 +1,8 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { Prisma } from '@prisma/client';
 import { DatabaseService } from 'src/database/database.service';
 import { CreateChatDto } from './DTO/chat.dto';
@@ -70,15 +74,33 @@ export class ChatService {
   async getChat(id: string) {
     return await this.databaseService.chat.findUnique({
       where: { id },
-      include: { participants: true },
+      include: { participants: true, messages: true },
     });
   }
   async getALLchats() {
     return await this.databaseService.chat.findMany({
-      include: { participants: true },
+      include: { participants: true, messages: true },
     });
   }
   async deleteChat(id: string) {
     return await this.databaseService.chat.delete({ where: { id } });
+  }
+  async joinChat(chatId: string, userId: string) {
+    // 1. Basic Validation: Ensure the user trying to join actually exists.
+    const userExists = await this.usersService.getUserById(userId); // Assuming this method exists
+
+    // 2. Basic Validation: Ensure the chat actually exists.
+    const chatExists = await this.databaseService.chat.findUnique({
+      where: { id: chatId },
+    });
+    if (!chatExists) {
+      throw new NotFoundException('Chat with ID not found.');
+    }
+    return await this.databaseService.chat.update({
+      where: { id: chatId },
+      data: {
+        participants: { connect: { id: userId } },
+      },
+    });
   }
 }

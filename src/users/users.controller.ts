@@ -7,32 +7,48 @@ import {
   Delete,
   Body,
   ValidationPipe,
+  UseGuards,
+  Request,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
-import { Prisma } from '@prisma/client';
 import { updateUserDto } from './DTO/update-user.dto';
+import { JwtAuthGuard } from 'src/auth/guards/jwt.guard';
 
 @Controller('users')
+@UseGuards(JwtAuthGuard)
 export class UsersController {
   constructor(private readonly userService: UsersService) {}
   @Get('')
   findAll() {
     return this.userService.getAllUsers();
   }
-  @Get(':id')
-  getUser(@Param('id') id: string) {
-    return this.userService.getUserById(id);
+  @Get('me')
+  getUser(@Request() req) {
+    const userId = req.user?.sub;
+    if (!userId) {
+      throw new UnauthorizedException('No authenticated user on request');
+    }
+    return this.userService.getUserById(req.user.sub);
   }
 
-  @Patch('')
+  @Patch('me')
   updateUser(
     @Body(new ValidationPipe()) updateUserDto: updateUserDto,
-    @Param('id') id: string,
+    @Request() req,
   ) {
-    return this.userService.updateUser(updateUserDto);
+    const userId = req.user?.sub;
+    if (!userId) {
+      throw new UnauthorizedException('No authenticated user on request');
+    }
+    return this.userService.updateUser(updateUserDto, req.user.sub);
   }
-  @Delete(':id')
-  deleteUser(@Param('id') id: string) {
-    return this.userService.deleteUser(id);
+  @Delete('me')
+  deleteUser(@Request() req) {
+    const userId = req.user?.sub;
+    if (!userId) {
+      throw new UnauthorizedException('No authenticated user on request');
+    }
+    return this.userService.deleteUser(req.user.sub);
   }
 }

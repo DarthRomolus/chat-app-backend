@@ -10,15 +10,24 @@ import {
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
 import { JwtService } from '@nestjs/jwt';
-import { Body, OnModuleInit, ValidationPipe } from '@nestjs/common';
-import { wsMessageDto } from './ws-message.dto';
+import { Body, OnModuleInit, UseGuards, ValidationPipe } from '@nestjs/common';
+import { wsMessageDto } from './DTO/ws-message.dto';
+import { joinRoomDto } from './DTO/join-room.dto';
+import { ChatService } from 'src/chat/chat.service';
+import { MessagesService } from 'src/messages/messages.service';
+import { WsJwtGuard } from 'src/auth/guards/ws-jwt.guard';
 
 @WebSocketGateway({
   cors: {
     origin: ['http://localhost:5173'],
   },
 })
+@UseGuards(WsJwtGuard)
 export class SocketsGateway implements OnModuleInit {
+  constructor(
+    private readonly chatsService: ChatService,
+    private readonly messagesServic: MessagesService,
+  ) {}
   @WebSocketServer()
   server: Server;
 
@@ -30,9 +39,17 @@ export class SocketsGateway implements OnModuleInit {
   }
   @SubscribeMessage('newMessage')
   handleMessage(@MessageBody(new ValidationPipe()) body: wsMessageDto) {
-    this.server.emit('onMessage', {
-      authorId: body.authorId,
+    this.server.to(body.room).emit('onMessage', {
+      room: body.room,
       content: body.content,
     });
+  }
+  @SubscribeMessage('joinRoom')
+  joinChat(
+    @MessageBody(new ValidationPipe()) body: joinRoomDto,
+    @ConnectedSocket() client: Socket,
+  ) {
+    client.join(body.room);
+    client.emit('joined room');
   }
 }

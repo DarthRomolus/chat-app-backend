@@ -20,6 +20,7 @@ export class UsersService {
   async getUserByEmail(email: string) {
     return await this.databaseService.user.findUnique({
       where: { email },
+      include: { chats: true },
     });
   }
   async createUser(createUserDto: createUserDto) {
@@ -32,9 +33,9 @@ export class UsersService {
       data: createUserDto,
     });
   }
-  async updateUser(updatedUserDto: updateUserDto) {
+  async updateUser(updatedUserDto: updateUserDto, id: string) {
     return await this.databaseService.user.update({
-      where: { email: updatedUserDto.email },
+      where: { id: id },
       data: updatedUserDto,
     });
   }

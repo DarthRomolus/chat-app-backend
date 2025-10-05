@@ -8,5 +8,6 @@ import { UsersModule } from 'src/users/users.module';
   imports: [DatabaseModule, UsersModule],
   controllers: [ChatController],
   providers: [ChatService],
+  exports: [ChatService],
 })
 export class ChatModule {}
