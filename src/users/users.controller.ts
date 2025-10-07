@@ -26,6 +26,7 @@ export class UsersController {
   @Get('me')
   async getUser(@Request() req) {
     const userId = req.user.sub;
+    console.log('decoded from jwt', userId);
     if (!userId) {
       throw new UnauthorizedException('No authenticated user on request');
     }

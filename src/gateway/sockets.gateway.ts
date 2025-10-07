@@ -16,12 +16,14 @@ import { wsMessageDto } from './DTO/ws-message.dto';
 import { joinRoomDto } from './DTO/join-room.dto';
 import { ChatService } from 'src/chat/chat.service';
 import { MessagesService } from 'src/messages/messages.service';
+import { WsJwtGuard } from 'src/auth/guards/ws-jwt.guard';
 
 @WebSocketGateway({
   cors: {
     origin: ['http://localhost:5173'],
   },
 })
+@UseGuards(WsJwtGuard)
 export class SocketsGateway implements OnModuleInit {
   constructor(
     private readonly chatsService: ChatService,
@@ -36,15 +38,6 @@ export class SocketsGateway implements OnModuleInit {
       console.log(socket.id);
       console.log('connected');
     });
-  }
-  @SubscribeMessage('identity')
-  handleIdentity(
-    @MessageBody() userId: string,
-    @ConnectedSocket() client: Socket,
-  ) {
-    client.data.userId = userId;
-    console.log(`Socket ${client.id} is now identified as User ${userId}`);
-    return { ok: true, message: `User identified as ${userId}` };
   }
   @SubscribeMessage('newMessage')
   handleMessage(@MessageBody(new ValidationPipe()) body: wsMessageDto) {

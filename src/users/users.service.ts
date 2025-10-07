@@ -15,7 +15,13 @@ export class UsersService {
   async getAllUserChat(id: string) {
     return await this.databaseService.user.findUnique({
       where: { id: id },
-      include: { chats: true },
+      include: {
+        chats: {
+          include: {
+            participants: { select: { email: true, name: true } },
+          },
+        },
+      },
     });
   }
   async getUserById(id: string) {
