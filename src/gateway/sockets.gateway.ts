@@ -13,7 +13,7 @@ import { Server, Socket } from 'socket.io';
 import { JwtService } from '@nestjs/jwt';
 import { Body, OnModuleInit, UseGuards, ValidationPipe } from '@nestjs/common';
 import { wsMessageDto } from './DTO/ws-message.dto';
-import { joinRoomDto } from './DTO/join-room.dto';
+import { RoomDto } from './DTO/room.dto';
 import { ChatService } from 'src/chat/chat.service';
 import { MessagesService } from 'src/messages/messages.service';
 import { WsJwtGuard } from 'src/auth/guards/ws-jwt.guard';
@@ -27,7 +27,7 @@ import { WsJwtGuard } from 'src/auth/guards/ws-jwt.guard';
 export class SocketsGateway implements OnModuleInit {
   constructor(
     private readonly chatsService: ChatService,
-    private readonly messagesServic: MessagesService,
+    private readonly messagesService: MessagesService,
     private readonly jwtService: JwtService,
   ) {}
   @WebSocketServer()
@@ -40,18 +40,28 @@ export class SocketsGateway implements OnModuleInit {
     });
   }
   @SubscribeMessage('newMessage')
-  handleMessage(@MessageBody(new ValidationPipe()) body: wsMessageDto) {
-    this.server.to(body.room).emit('onMessage', {
-      room: body.room,
+  async handleMessage(@MessageBody(new ValidationPipe()) body: wsMessageDto) {
+    await this.messagesService.createMessage(body);
+    this.server.to(body.chatId).emit('onMessage', {
+      chatId: body.chatId,
+      authorId: body.authorId,
       content: body.content,
     });
   }
   @SubscribeMessage('joinRoom')
   joinChat(
-    @MessageBody(new ValidationPipe()) body: joinRoomDto,
+    @MessageBody(new ValidationPipe()) body: RoomDto,
     @ConnectedSocket() client: Socket,
   ) {
     client.join(body.room);
     client.emit('joined room');
+  }
+  @SubscribeMessage('leaveRoom')
+  leaveChat(
+    @MessageBody(new ValidationPipe()) body: RoomDto,
+    @ConnectedSocket() client: Socket,
+  ) {
+    client.leave(body.room);
+    client.emit('left room');
   }
 }

@@ -4,7 +4,7 @@ export class MessageDto {
   @IsNotEmpty()
   content: string;
   @IsNotEmpty()
-  authorId: string;
-  @IsNotEmpty()
   chatId: string;
+  @IsNotEmpty()
+  authorId: string;
 }

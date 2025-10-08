@@ -1,6 +1,6 @@
 import { IsNotEmpty } from 'class-validator';
 
-export class joinRoomDto {
+export class RoomDto {
   @IsNotEmpty()
   room: string;
 }
