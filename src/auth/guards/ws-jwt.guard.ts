@@ -1,4 +1,3 @@
-// src/auth/guards/ws-jwt.guard.ts
 import {
   CanActivate,
   ExecutionContext,
