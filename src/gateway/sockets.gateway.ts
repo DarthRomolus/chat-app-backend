@@ -41,12 +41,8 @@ export class SocketsGateway implements OnModuleInit {
   }
   @SubscribeMessage('newMessage')
   async handleMessage(@MessageBody(new ValidationPipe()) body: wsMessageDto) {
-    await this.messagesService.createMessage(body);
-    this.server.to(body.chatId).emit('onMessage', {
-      chatId: body.chatId,
-      authorId: body.authorId,
-      content: body.content,
-    });
+    const newMessage = await this.messagesService.createMessage(body);
+    this.server.to(body.chatId).emit('onMessage', newMessage);
   }
   @SubscribeMessage('joinRoom')
   joinChat(
