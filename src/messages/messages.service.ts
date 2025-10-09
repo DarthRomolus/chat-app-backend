@@ -10,11 +10,12 @@ export class MessagesService {
     return await this.databaseService.message.create({
       data: {
         content: message.content,
+        name: message.name,
         author: {
-          connect: { id: message.authorId }, // connect the message to the existing user
+          connect: { id: message.authorId },
         },
         chat: {
-          connect: { id: message.chatId }, // connect the message to the existing chat
+          connect: { id: message.chatId },
         },
       },
     });

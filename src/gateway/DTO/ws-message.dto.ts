@@ -9,4 +9,7 @@ export class wsMessageDto {
 
   @IsNotEmpty()
   content: string;
+
+  @IsNotEmpty()
+  name: string;
 }
